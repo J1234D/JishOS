@@ -13,8 +13,7 @@ function TopBar() {
   }, []);
   return (
     <nav className="flex flex-row fixed top-4 left-1/2 -translate-x-1/2
-    w-[95%] max-w-7xl h-14
-    flex items-center justify-between
+    w-[95%] max-w-7xl h-14 items-center justify-between
     px-5
     rounded-2xl
     bg-white/15

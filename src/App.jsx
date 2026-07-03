@@ -4,23 +4,31 @@ import BootWindow from "./components/BootWindow";
 import Desktop from "./components/Desktop";
 
 function App() {
-  const [booted, setBooted] = useState(false);
-  if (!booted) {
-    return (
-      <div
-        className='h-screen w-screen bg-[url("./assets/Boot-bg.png")] bg-cover bg-center bg-no-repeat'
-      >
-        <div className="h-screen w-screen flex justify-center items-center">
-          <BootWindow bootedState={booted} bootedChange={setBooted} />
+  const [currentScreen, setCurrentScreen] = useState("boot");
+
+  switch (currentScreen) {
+    case "boot":
+      return (
+        <div className='h-screen w-screen bg-[url("./assets/Boot-bg.png")] bg-cover bg-center bg-no-repeat'>
+          <div className="h-screen w-screen flex justify-center items-center">
+            <BootWindow
+              currentScreen={currentScreen}
+              changeScreen={setCurrentScreen}
+            />
+          </div>
         </div>
-      </div>
-    );
-  } else {
-    return (
-      <div>
-        <Desktop />
-      </div>
-    );
+      );
+      break;
+
+    case "desktop":
+      return (
+        <div>
+          <Desktop />
+        </div>
+      );
+
+    default:
+      break;
   }
 }
 

@@ -1,10 +1,8 @@
 import React from "react";
 
-export default function BootWindow({bootedState,bootedChange}) {
+export default function BootWindow({currentScreen,changeScreen}) {
   function Boot(){
-    if(!bootedState){
-      bootedChange(true)
-    }
+    changeScreen("desktop")
   }
   return (
     
