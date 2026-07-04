@@ -2,9 +2,7 @@ import React, { useState } from "react";
 
 function Browser() {
   const [url, setUrl] = useState("");
-  const [currentUrl, setCurrentUrl] = useState(
-    "",
-  );
+  const [currentUrl, setCurrentUrl] = useState("");
   return (
     <div>
       <div className="w-full max-w-sm min-w-50">
@@ -17,7 +15,14 @@ function Browser() {
           />
           <button
             className="absolute top-1 right-1 flex items-center rounded bg-slate-800 py-1 px-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-            type="button" onClick={()=>setCurrentUrl(url)}
+            type="button"
+            onClick={() => {
+              if (url.startsWith("https://")) {
+                setCurrentUrl(url);
+              } else {
+                setCurrentUrl("https://" + url);
+              }
+            }}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
