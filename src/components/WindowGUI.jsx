@@ -2,35 +2,31 @@ import React, { useEffect, useState, useRef } from "react";
 
 function WindowGUI({ title, onClose, children, desktopRef }) {
   const windowRef = useRef(null);
+  const resizingRef = useRef(null);
 
   const [position, setPosition] = useState({
     X: 400,
     Y: 120,
+  });
+  const [size, setSize] = useState({
+    width: 700,
+    height: 500,
   });
   const offset = useRef({
     X: 0,
     Y: 0,
   });
   const draggingRef = useRef(false);
-  const handleMouseMove = (e) => drag(e);
-  const handleMouseUp = (e) => {
-    draggingRef.current = false;
+  const handlePointerMove = (e) => {
+    drag(e);
+    resize(e);
   };
-  useEffect(() => {
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => {
-      // Cleanup
-      window.removeEventListener("mousemove", handleMouseMove);
-    };
-  }, []);
+  const handlePointerUp = (e) => {
+    console.log("Mouse up");
+    draggingRef.current = false;
+    resizingRef.current = null;
+  };
 
-  useEffect(() => {
-    window.addEventListener("mouseup", handleMouseUp);
-    return () => {
-      // Cleanup
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, []);
   const drag = (e) => {
     if (draggingRef.current) {
       const maxX =
@@ -50,10 +46,84 @@ function WindowGUI({ title, onClose, children, desktopRef }) {
       });
     }
   };
+  const resize = (e) => {
+    if (resizingRef.current === "right") {
+      let windowWidth = e.clientX - position.X;
+      const MIN_WIDTH = 300;
+      windowWidth = Math.min(
+        desktopRef.current.clientWidth - position.X - 10,
+        Math.max(MIN_WIDTH, windowWidth),
+      );
+      setSize((prev) => ({
+        ...prev,
+        width: windowWidth,
+      }));
+    }
+
+    if (resizingRef.current === "left") {
+      let rightEdge = position.X + size.width;
+      let newX = e.clientX;
+      let windowWidth = rightEdge - newX;
+      const MIN_WIDTH = 300;
+      let MAX_X = rightEdge - 300;
+      windowWidth = Math.min(
+        desktopRef.current.clientWidth - position.X - 10,
+        Math.max(MIN_WIDTH, windowWidth),
+      );
+
+      newX = Math.min(MAX_X, newX);
+      setSize((prev) => ({
+        ...prev,
+        width: windowWidth,
+      }));
+      setPosition({
+        X: newX,
+        Y: position.Y,
+      });
+    }
+
+    if (resizingRef.current === "bottom") {
+      let windowHeight = e.clientY - position.Y;
+      const MIN_HEIGHT = 300;
+      windowHeight = Math.min(
+        desktopRef.current.clientHeight - position.Y - 10,
+        Math.max(MIN_HEIGHT, windowHeight),
+      );
+
+      setSize((prev) => ({
+        ...prev,
+        height: windowHeight,
+      }));
+    }
+    if (resizingRef.current === "top") {
+      let newY = e.clientY;
+      let bottomEdge = position.Y + size.height;
+      let windowHeight = bottomEdge - newY;
+      const MIN_HEIGHT = 300;
+      const MIN_Y = 70;
+      const MAX_Y = bottomEdge - MIN_HEIGHT;
+
+      // Clamp the top edge
+      newY = Math.max(MIN_Y, Math.min(MAX_Y, newY));
+
+      // Now calculate the height from the clamped Y
+      windowHeight = bottomEdge - newY;
+      setPosition((prev) => ({
+        ...prev,
+        Y: newY,
+      }));
+      setSize((prev) => ({
+        ...prev,
+        height: windowHeight,
+      }));
+    }
+  };
 
   return (
     <div
-      className="w-md bg-sky-100/10
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      className="bg-sky-100/10
                     backdrop-blur-2xl
                     backdrop-saturate-150
                     border border-white/20
@@ -62,10 +132,14 @@ function WindowGUI({ title, onClose, children, desktopRef }) {
                     shadow-2xl shadow-sky-900/10
                     overflow-hidden
                     absolute
+                    relative
+                    flex flex-col h-full
                     "
       style={{
         left: position.X,
         top: position.Y,
+        width: size.width,
+        height: size.height,
       }}
       ref={windowRef}
     >
@@ -79,7 +153,9 @@ function WindowGUI({ title, onClose, children, desktopRef }) {
                     font-medium
                     text-xl
                   text-white/90"
-        onMouseDown={(e) => {
+        onPointerDown={(e) => {
+          if (resizingRef.current) return;
+          e.currentTarget.setPointerCapture(e.pointerId);
           let windowX = position.X;
           let windowY = position.Y;
           let mouseX = e.clientX;
@@ -97,6 +173,9 @@ function WindowGUI({ title, onClose, children, desktopRef }) {
                     transition-colors
                   hover:bg-red-500
                   hover:text-white"
+          onPointerDown={(e) => {
+            e.stopPropagation();
+          }}
           onClick={() => onClose()}
         >
           <svg
@@ -115,7 +194,71 @@ function WindowGUI({ title, onClose, children, desktopRef }) {
           </svg>
         </button>
       </div>
-      <div className="p-8">{children}</div>
+      <div className="p-8 flex-1 child select-none">{children}</div>
+      <div
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          e.stopPropagation();
+          e.preventDefault();
+          resizingRef.current = "right";
+        }}
+        className="
+    absolute
+    top-0
+    right-0
+    w-2
+    h-full
+    bg-transparent
+    cursor-e-resize"
+      />
+      <div
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          e.stopPropagation();
+          e.preventDefault();
+          resizingRef.current = "left";
+        }}
+        className="
+    absolute
+    top-0
+    left-0
+    w-2
+    h-full
+    bg-transparent
+    cursor-w-resize"
+      />
+      <div
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          e.stopPropagation();
+          e.preventDefault();
+          resizingRef.current = "top";
+        }}
+        className="
+    absolute
+    top-0
+    right-0
+    w-full
+    h-2
+    bg-transparent
+    cursor-n-resize"
+      />
+      <div
+        onPointerDown={(e) => {
+          e.currentTarget.setPointerCapture(e.pointerId);
+          e.stopPropagation();
+          e.preventDefault();
+          resizingRef.current = "bottom";
+        }}
+        className="
+    absolute
+    bottom-0
+    right-0
+    w-full
+    h-2
+    bg-transparent
+    cursor-s-resize"
+      />
     </div>
   );
 }

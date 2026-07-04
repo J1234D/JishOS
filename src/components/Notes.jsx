@@ -15,20 +15,18 @@ function Notes() {
     }
   }, []);
   return (
-    <div>
-      <div>
-        <textarea
-          value={note}
-          className="w-full h-80 border"
-          onChange={(e) => setNote(e.target.value)}
-        ></textarea>
-        <button
-          className="px-8 py-2 rounded-full bg-linear-to-b from-blue-500 to-blue-600 text-white focus:ring-2 focus:ring-blue-400 hover:shadow-xl transition duration-200"
-          onClick={save}
-        >
-          Save
-        </button>
-      </div>
+    <div className="flex flex-col h-full">
+      <textarea
+        value={note}
+        className="flex-1 border"
+        onChange={(e) => setNote(e.target.value)}
+      ></textarea>
+      <button
+        className="px-8 py-2 rounded-full bg-linear-to-b from-blue-500 to-blue-600 text-white focus:ring-2 focus:ring-blue-400 hover:shadow-xl transition duration-200"
+        onClick={save}
+      >
+        Save
+      </button>
     </div>
   );
 }
