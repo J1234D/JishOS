@@ -7,6 +7,7 @@ import WindowGUI from "./WindowGUI";
 import browserIcon from "../assets/Browser-icon.png";
 import Browser from "./Browser";
 import ClockWidget from "./Clock";
+import BasicDateCalendar from "./Calendar";
 function Desktop() {
   const [nextOffset, setNextOffset] = useState({
     x: 0,
@@ -73,6 +74,19 @@ function Desktop() {
   "
       >
         <ClockWidget />
+      </div>
+      <div
+        className="
+    absolute
+    top-60
+    right-6
+    z-10
+    p-3
+    bg-sky-100/50
+    rounded-xl
+  "
+      >
+        <BasicDateCalendar />
       </div>
       <div className="absolute top-24 left-6 grid grid-cols-1 gap-4">
         <DesktopIcon
