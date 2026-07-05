@@ -9,7 +9,7 @@ function WindowGUI({ title, onClose, children, desktopRef, x, y, onFocus }) {
     Y: y,
   });
   const [size, setSize] = useState({
-    width: 400,
+    width: 600,
     height: 400,
   });
   const offset = useRef({

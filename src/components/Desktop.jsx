@@ -3,12 +3,15 @@ import TopBar from "./TopBar";
 import Notes from "./Notes";
 import DesktopIcon from "./DesktopIcon";
 import notesIcon from "../assets/Notes-icon.png";
+import pythonIcon from "../assets/Python-icon.png";
 import WindowGUI from "./WindowGUI";
 import browserIcon from "../assets/Browser-icon.png";
 import Browser from "./Browser";
 import ClockWidget from "./Clock";
 import BasicDateCalendar from "./Calendar";
 import wallpaper from "../assets/azure-horizon.3840x2160.mp4";
+import PythonIDE from "./PythonIDE";
+import GradientText from "./GradientText";
 
 function Desktop() {
   const [nextOffset, setNextOffset] = useState({
@@ -58,6 +61,21 @@ function Desktop() {
         </WindowGUI>
       );
     }
+    if (app.type === "python") {
+      return (
+        <WindowGUI
+          onFocus={() => focusWindow("python")}
+          key={app.id}
+          title="Python IDE"
+          onClose={() => closeWindowByName("python")}
+          desktopRef={desktopRef}
+          x={app.x}
+          y={app.y}
+        >
+          <PythonIDE />
+        </WindowGUI>
+      );
+    }
   });
   return (
     <div
@@ -77,9 +95,36 @@ function Desktop() {
       <div
         className="
     absolute
+    inset-0
+    flex
+    items-center
+    justify-center
+    pointer-events-none
+    select-none
+    z-0
+  "
+      >
+        <GradientText
+          colors={["#5227FF", "#FF9FFC", "#B497CF"]}
+          animationSpeed={8}
+          showBorder={false}
+          className="
+      text-8xl
+      md:text-9xl
+      font-bold
+      opacity-80
+      drop-shadow-[0_0_40px_rgba(255,160,255,0.35)]
+    "
+        >
+          JishOS
+        </GradientText>
+      </div>
+      <div
+        className="
+    absolute
     top-20
     right-6
-    z-10
+    z-0
     p-3
   "
       >
@@ -90,7 +135,7 @@ function Desktop() {
     absolute
     top-60
     right-6
-    z-10
+    z-0
     p-4
     rounded-3xl
 
@@ -107,6 +152,8 @@ function Desktop() {
         <BasicDateCalendar
           sx={{
             bgcolor: "transparent",
+            width:300,
+            height:250,
 
             /* Month & Year */
             "& .MuiPickersCalendarHeader-label": {
@@ -199,6 +246,27 @@ function Desktop() {
                 {
                   id: crypto.randomUUID(),
                   type: "browser",
+                  x: 100 + nextOffset.x,
+                  y: 80 + nextOffset.y,
+                },
+              ]);
+              setNextOffset((prev) => ({
+                x: prev.x + 30,
+                y: prev.y + 30,
+              }));
+            }
+          }}
+        />
+        <DesktopIcon
+          icon={pythonIcon}
+          name="Python IDE"
+          onClick={() => {
+            if (!openWindows.map((Window) => Window.type).includes("python")) {
+              setOpenWindows([
+                ...openWindows,
+                {
+                  id: crypto.randomUUID(),
+                  type: "python",
                   x: 100 + nextOffset.x,
                   y: 80 + nextOffset.y,
                 },
