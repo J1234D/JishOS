@@ -3,14 +3,14 @@ import "./App.css";
 import BootWindow from "./components/BootWindow";
 import Desktop from "./components/Desktop";
 import PrismaticBurst from "./components/PrismaticBurst";
-import { Analytics } from "@vercel/analytics/next"
+import { Analytics } from "@vercel/analytics/react";
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState("boot");
 
-  switch (currentScreen) {
-    case "boot":
-      return (
+  return (
+    <>
+      {currentScreen === "boot" && (
         <div className="relative h-screen w-screen">
           <div
             className="absolute inset-0 overflow-hidden"
@@ -42,20 +42,17 @@ function App() {
             />
           </div>
         </div>
-      );
-      break;
+      )}
 
-    case "desktop":
-      return (
+      {currentScreen === "desktop" && (
         <div>
           <Desktop />
-          <Analytics/>
         </div>
-      );
+      )}
 
-    default:
-      break;
-  }
+      <Analytics />
+    </>
+  );
 }
 
 export default App;
