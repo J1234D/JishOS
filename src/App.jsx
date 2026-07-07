@@ -3,6 +3,7 @@ import "./App.css";
 import BootWindow from "./components/BootWindow";
 import Desktop from "./components/Desktop";
 import PrismaticBurst from "./components/PrismaticBurst";
+import { Analytics } from "@vercel/analytics/next"
 
 function App() {
   const [currentScreen, setCurrentScreen] = useState("boot");
@@ -48,6 +49,7 @@ function App() {
       return (
         <div>
           <Desktop />
+          <Analytics/>
         </div>
       );
 
