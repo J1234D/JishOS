@@ -116,7 +116,7 @@ Several larger features are planned for future releases.
 Clone the repository:
 
 ```bash
-git clone https://github.com/J1234D/jishos.git
+git clone https://github.com/jishnudutta/jishos.git
 ```
 
 Install dependencies:
