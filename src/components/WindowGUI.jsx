@@ -1,9 +1,35 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState, useRef } from "react";
 
 function WindowGUI({ title, onClose, children, desktopRef, x, y, onFocus }) {
   const windowRef = useRef(null);
   const resizingRef = useRef(null);
+  const [maximized, setMaximized] = useState(false);
 
+  const previousState = useRef(null);
+  function onMaximize() {
+    if (!maximized) {
+      previousState.current = {
+        position: { ...position },
+        size: { ...size },
+      };
+
+      setPosition({
+        X: 0,
+        Y: 0, // below your TopBar
+      });
+
+      setSize({
+        width: desktopRef.current.clientWidth,
+        height: desktopRef.current.clientHeight - 0,
+      });
+
+      setMaximized(true);
+    } else {
+      setPosition(previousState.current.position);
+      setSize(previousState.current.size);
+      setMaximized(false);
+    }
+  }
   const [position, setPosition] = useState({
     X: x,
     Y: y,
@@ -46,6 +72,7 @@ function WindowGUI({ title, onClose, children, desktopRef, x, y, onFocus }) {
     }
   };
   const resize = (e) => {
+    if (maximized) return;
     if (resizingRef.current === "right") {
       let windowWidth = e.clientX - position.X;
       const MIN_WIDTH = 300;
@@ -152,6 +179,7 @@ function WindowGUI({ title, onClose, children, desktopRef, x, y, onFocus }) {
                     text-xl
                   text-white/90"
         onPointerDown={(e) => {
+          if (maximized) return;
           if (resizingRef.current) return;
           e.currentTarget.setPointerCapture(e.pointerId);
           let windowX = position.X;
@@ -163,34 +191,67 @@ function WindowGUI({ title, onClose, children, desktopRef, x, y, onFocus }) {
         }}
       >
         <div className="font-semibold">{title}</div>
-        <button
-          className="w-9 h-9
+        <div className="flex items-center gap-2">
+          <button
+            className="w-9 h-9
+                    flex items-center justify-center
+                    rounded-lg
+                  text-white/70
+                    transition-colors
+                  hover:bg-white/40
+                  hover:text-white"
+            onPointerDown={(e) => {
+              e.stopPropagation();
+            }}
+            onClick={() => onMaximize()}
+          >
+            <svg
+              xmlns="http://w3.org"
+              width={24}
+              height={24}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className=""
+            >
+              <path d="M15 3h6v6" />
+              <path d="M9 21H3v-6" />
+              <path d="M21 3l-7 7" />
+              <path d="M3 21l7-7" />
+            </svg>
+          </button>
+          <button
+            className="w-9 h-9
                     flex items-center justify-center
                     rounded-lg
                   text-white/70
                     transition-colors
                   hover:bg-red-500
                   hover:text-white"
-          onPointerDown={(e) => {
-            e.stopPropagation();
-          }}
-          onClick={() => onClose()}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="size-6"
+            onPointerDown={(e) => {
+              e.stopPropagation();
+            }}
+            onClick={() => onClose()}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M6 18 18 6M6 6l12 12"
-            />
-          </svg>
-        </button>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="size-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18 18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
       <div className="p-8 flex-1 min-h-0 select-none">{children}</div>
       <div
