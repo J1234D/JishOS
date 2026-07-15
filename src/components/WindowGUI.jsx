@@ -15,7 +15,7 @@ function WindowGUI({ title, onClose, children, desktopRef, x, y, onFocus }) {
 
       setPosition({
         X: 0,
-        Y: 0, // below your TopBar
+        Y: 0, // below the TopBar
       });
 
       setSize({
