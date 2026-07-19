@@ -1,5 +1,5 @@
 services:
-  jishworks:
+  jishos:
     build: .
     container_name: jishos
     restart: unless-stopped
