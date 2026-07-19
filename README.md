@@ -7,7 +7,7 @@ The goal of this project is to recreate the experience of a lightweight operatin
 ---
 
 # Deployed website link
-<a href="https://jish-os.vercel.app">JishOS website</a>
+<a href="https://jishos.jishworks.in">JishOS website</a>
 
 ---
 
